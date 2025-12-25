@@ -1,0 +1,141 @@
+# -------- 顶层 --------
+max_turns: 2
+retriever:
+  url: "http://127.0.0.1:8000/retrieve"
+  topk: 3
+
+# additional settings for hamster
+state_masking: true
+
+global_profiler:
+  tool: "none"
+  steps: []
+  global_tool_config:
+    nsys:
+      controller_nsight_options: {}
+
+ray_kwargs:
+  ray_init:
+    num_cpus: 64
+    log_to_driver: true
+    runtime_env: {}
+  timeline_json_file: null
+
+# -------- 数据 --------
+data:
+  train_files: null
+  val_files: null
+  train_data_num: null
+  val_data_num: null
+  train_batch_size: 512
+  val_batch_size: 256
+  max_prompt_length: 4096
+  max_response_length: 500
+  max_start_length: 2048
+  max_obs_length: 500
+  shuffle: true
+  shuffle_train_dataloader: true
+  seed: 1
+  trust_remote_code: false
+  dataloader_num_workers: 4
+  custom_cls:
+    path: verl_hamster/verl/utils/dataset/hamster_dataset.py
+    name: QAJSONLDataset
+  datagen:
+    path: null
+    name: null
+  sampler:
+    class_path: null
+    class_name: null
+
+# -------- 算法 --------
+algorithm:
+  adv_estimator: grpo
+  gamma: 1.0
+  lam: 1.0
+  no_think_rl: false
+  use_kl_in_reward: false
+  kl_penalty: kl
+  norm_adv_by_std_in_grpo: true
+
+# -------- 模型/Actor/Ref --------
+actor_rollout_ref:
+  actor:
+    _target_: verl.workers.config.ActorConfig        # ← 新增
+    use_dynamic_bsz: false
+    strategy: fsdp2
+    optim:
+      lr: 1.0e-6
+      lr_warmup_steps_ratio: 0.285
+    use_kl_loss: true
+    kl_loss_coef: 0.001
+    kl_loss_type: low_var_kl
+    ppo_mini_batch_size: 256
+    ppo_micro_batch_size: 64
+    fsdp_config:
+      param_offload: true
+      grad_offload: true
+      optimizer_offload: true
+    loss_agg_mode: mean
+
+  model:
+    _target_: verl.workers.config.ModelConfig        # ← 新增
+    path: "Qwen/Qwen2.5-3B"
+    enable_gradient_checkpointing: true
+    use_remove_padding: true
+    trust_remote_code: false
+    use_shm: false
+
+  rollout:
+    _target_: verl.workers.config.RolloutConfig      # ← 新增
+    name: vllm
+    n: 5
+    temperature: 1.0
+    tensor_model_parallel_size: 1
+    log_prob_micro_batch_size: 128
+    gpu_memory_utilization: 0.6
+    mode: "sync"
+
+  ref:
+    _target_: verl.workers.config.RefPolicyConfig    # ← 新增
+    log_prob_micro_batch_size: 128
+    fsdp_config:
+      param_offload: true
+
+# -------- Critic --------
+critic:
+  _target_: verl.workers.config.CriticConfig         # ← 新增
+  strategy: fsdp
+  enable: false
+
+# -------- 奖励模型 --------
+reward_model:
+  enable: false
+  strategy: fsdp
+  launch_reward_fn_async: false
+  enable_resource_pool: false
+  n_gpus_per_node: 1
+  nnodes: 1
+  reward_kwargs: {}
+
+# -------- 训练控制 --------
+trainer:
+  project_name: "Search-R1"
+  experiment_name: "nq-search-r1-grpo-qwen2.5-3b-em"
+  logger: ["wandb"]
+  total_epochs: 15
+  total_training_steps: 1005
+  n_gpus_per_node: 8
+  nnodes: 1
+  save_freq: 100
+  test_freq: 50
+  val_only: false
+  val_before_train: true
+  default_hdfs_dir: null
+  default_local_dir: "verl_checkpoints/${trainer.experiment_name}"
+  balance_batch: true
+  critic_warmup: 0
+  profile_steps: []
+  rollout_data_dir: null
+  compute_ece: true
+  esi_redundant_time: 120

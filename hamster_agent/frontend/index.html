@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Web Interface</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/components.css">
+    <link rel="stylesheet" href="/static/css/flow-agent-selector.css">
+    <link rel="icon" type="image/x-icon" href="/static/assets/favicon.ico">
+</head>
+
+<body>
+    <!-- 主应用容器 -->
+    <div id="app" class="app-container">
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <div class="nav-brand">
+                <img src="/static/assets/logo.svg" alt="OpenManus" class="logo">
+                <span class="brand-text">OpenManus</span>
+            </div>
+
+            <div class="nav-menu">
+                <button class="nav-item" data-view="chat" title="Chat">
+                    <i class="icon-chat"></i>
+                    <span>Chat</span>
+                </button>
+                <button class="nav-item" data-view="workspace" title="Workspace">
+                    <i class="icon-folder"></i>
+                    <span>Workspace</span>
+                </button>
+                <button class="nav-item" data-view="config" title="Configuration">
+                    <i class="icon-settings"></i>
+                    <span>Config</span>
+                </button>
+                <button class="nav-item" data-view="about" title="About">
+                    <i class="icon-info"></i>
+                    <span>About</span>
+                </button>
+            </div>
+
+            <div class="nav-status">
+                <div class="connection-indicator" id="connectionStatus">
+                    <div class="status-dot"></div>
+                    <span class="status-text">Connecting...</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+
+            <!-- 聊天视图 -->
+            <div class="view chat-view active" id="chatView">
+                <div class="chat-container">
+                    <div class="chat-sidebar">
+                        <div class="flow-agent-selector-card">
+                            <h3>🔧 Flow & Agent Configuration</h3>
+                            <div class="status-indicator" id="config-status">
+                                <span class="status-dot"></span>
+                                <span class="status-text">Not Configured</span>
+                            </div>
+
+                            <!-- Flow选择器 -->
+                            <div class="config-section">
+                                <label class="section-label">
+                                    <i class="icon">🌊</i>
+                                    Flow Type
+                                </label>
+                                <select id="flowSelector" class="styled-select">
+                                    <option value="single_agent">Single Agent Flow</option>
+                                    <option value="planning">Planning Flow</option>
+                                    <option value="game_data_analysis">Game Data Analysis</option>
+                                    <option value="data_analysis_flow">Data Analysis Flow</option>
+                                </select>
+                                <div class="description" id="flow-description">
+                                    Uses a single agent to complete tasks
+                                </div>
+                            </div>
+
+                            <!-- Agent选择器 -->
+                            <div class="config-section">
+                                <label class="section-label">
+                                    <i class="icon">🤖</i>
+                                    Primary Agent
+                                </label>
+                                <select id="agentSelector" class="styled-select">
+                                    <option value="manus">Manus Agent</option>
+                                    <option value="DataAnalysisExpert">Data Analysis Expert</option>
+                                    <option value="ExcelCleanAgent">Excel Clean Agent</option>
+                                    <option value="GameDataAnalysisAgent">Game Data Analysis Agent</option>
+                                    <option value="SWEAgent">SWE Agent</option>
+                                    <option value="BrowserAgent">Browser Agent</option>
+                                    <option value="AnswerQuestionAgent">Answer Question Agent</option>
+                                    <option value="data_analysis">Data Analysis Agent</option>
+                                    <option value="MultiDataAnalysisCoordinator">Multi Data Analysis Coordinator
+                                    </option>
+                                    <option value="KeyMetricAnalysisAgent">Key Metric Analysis Agent</option>
+                                    <option value="AnalysisResultQnAAgent">Analysis Result Q&A Agent</option>
+                                </select>
+                                <div class="description" id="agent-description">
+                                    Default agent for general tasks
+                                </div>
+                            </div>
+
+                            <!-- 多Agent配置（Flow模式时显示） -->
+                            <div class="config-section" id="multi-agents-section" style="display: none;">
+                                <label class="section-label">
+                                    <i class="icon">👥</i>
+                                    Additional Agents
+                                    <span class="hint">(Select agents to work together in this flow)</span>
+                                </label>
+                                <div class="agents-grid" id="agents-grid">
+                                    <!-- 动态生成的Agent checkboxes -->
+                                </div>
+                                <div class="recommended-agents" id="recommended-agents" style="display: none;">
+                                    <span class="recommendation-label">💡 Recommended for this flow:</span>
+                                    <div class="recommendation-buttons" id="recommendation-buttons"></div>
+                                </div>
+                            </div>
+
+                            <!-- Flow参数配置 -->
+                            <div class="config-section" id="parameters-section" style="display: none;">
+                                <label class="section-label">
+                                    <i class="icon">⚙️</i>
+                                    Flow Parameters
+                                </label>
+                                <div class="parameters-container" id="parameters-container">
+                                    <!-- 动态生成的参数配置 -->
+                                </div>
+                            </div>
+
+                            <!-- 应用按钮 -->
+                            <div class="selector-actions">
+                                <button class="btn-primary btn-small" id="applyModeBtn">
+                                    <i class="icon-refresh"></i>
+                                    Apply Configuration
+                                </button>
+                                <button class="btn-secondary btn-small" id="test-connection">
+                                    <i class="icon">🔍</i>
+                                    Test Connection
+                                </button>
+                                <button class="btn-outline btn-small" id="reset-config">
+                                    <i class="icon">🔄</i>
+                                    Reset
+                                </button>
+                                <div class="config-status" id="configStatus">
+                                    <i class="icon-check-circle"></i>
+                                    <span>Single Agent Mode</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="agent-status-card">
+                            <h3>Execution Status</h3>
+                            <div class="status-item">
+                                <span class="label">Status:</span>
+                                <span class="status-badge" id="agentStatus">Idle</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="label">Progress:</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                                </div>
+                                <span class="progress-text" id="progressText">0 / 20</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="label">Last Action:</span>
+                                <span class="last-action" id="lastAction">Ready</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="label">Current Mode:</span>
+                                <span class="current-mode" id="currentMode">Single Agent</span>
+                            </div>
+                        </div>
+
+                        <div class="activity-log-card">
+                            <h3>Configuration Log</h3>
+                            <div class="activity-log" id="activityLog">
+                                <div class="log-entry">
+                                    <span class="timestamp">${new Date().toLocaleTimeString()}</span>
+                                    <span class="message">System initialized</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="quick-actions-card">
+                            <h3>Quick Actions</h3>
+                            <button class="action-btn" id="clearChatBtn">
+                                <i class="icon-trash"></i>
+                                Clear Chat
+                            </button>
+                            <button class="action-btn" id="resetAgentBtn">
+                                <i class="icon-refresh"></i>
+                                Reset Agent
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="chat-main">
+                        <div class="messages-container" id="messagesContainer">
+                            <div class="welcome-message">
+                                <h2>Welcome to OpenManus</h2>
+                                <p>I'm your AI assistant. How can I help you today?</p>
+                                <div class="quick-suggestions">
+                                    <button class="suggestion-btn" data-message="What can you help me with?">
+                                        What can you help me with?
+                                    </button>
+                                    <button class="suggestion-btn" data-message="Analyze the files in my workspace">
+                                        Analyze my workspace
+                                    </button>
+                                    <button class="suggestion-btn" data-message="Help me write some code">
+                                        Help me write code
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-container">
+                            <div class="input-wrapper">
+                                <textarea id="messageInput" class="message-input"
+                                    placeholder="Type your message here..." rows="1" maxlength="4000"></textarea>
+                                <button class="send-button" id="sendButton">
+                                    <i class="icon-send"></i>
+                                </button>
+                            </div>
+                            <div class="input-footer">
+                                <span class="character-count">
+                                    <span id="charCount">0</span> / 4000
+                                </span>
+                                <div class="input-actions">
+                                    <button class="attachment-btn" title="Upload file">
+                                        <i class="icon-attachment"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 工作空间视图 -->
+            <div class="view workspace-view" id="workspaceView">
+                <div class="workspace-header">
+                    <h2>Workspace Management</h2>
+                    <div class="workspace-actions">
+                        <button class="btn-primary" id="uploadFileBtn">
+                            <i class="icon-upload"></i>
+                            Upload Files
+                        </button>
+                        <button class="btn-secondary" id="createFolderBtn">
+                            <i class="icon-folder-plus"></i>
+                            New Folder
+                        </button>
+                        <button class="btn-secondary" id="refreshFilesBtn">
+                            <i class="icon-refresh"></i>
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <div class="workspace-stats" id="workspaceStats">
+                    <div class="stat-item">
+                        <span class="stat-label">Files:</span>
+                        <span class="stat-value" id="fileCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Size:</span>
+                        <span class="stat-value" id="totalSize">0 B</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Path:</span>
+                        <span class="stat-value" id="workspacePath">Loading...</span>
+                    </div>
+                </div>
+
+                <div class="workspace-content">
+                    <div class="file-list" id="fileList">
+                        <div class="loading-state">
+                            <div class="spinner"></div>
+                            <p>Loading files...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 文件上传拖拽区域 -->
+                <div class="drop-zone" id="dropZone">
+                    <div class="drop-content">
+                        <i class="icon-upload-cloud"></i>
+                        <h3>Drop files here to upload</h3>
+                        <p>or click to select files</p>
+                    </div>
+                </div>
+
+                <!-- 隐藏的文件输入 -->
+                <input type="file" id="fileInput" multiple hidden>
+            </div>
+
+            <!-- 配置视图 -->
+            <div class="view config-view" id="configView">
+                <div class="config-header">
+                    <h2>Configuration</h2>
+                    <div class="config-actions">
+                        <button class="btn-primary" id="saveConfigBtn">
+                            <i class="icon-save"></i>
+                            Save Changes
+                        </button>
+                        <button class="btn-secondary" id="testConfigBtn">
+                            <i class="icon-test"></i>
+                            Test Config
+                        </button>
+                        <button class="btn-outline" id="resetConfigBtn">
+                            <i class="icon-refresh"></i>
+                            Reset to Default
+                        </button>
+                    </div>
+                </div>
+
+                <div class="config-content">
+                    <div class="config-tabs">
+                        <button class="tab-btn active" data-tab="llm">LLM Settings</button>
+                        <button class="tab-btn" data-tab="browser">Browser</button>
+                        <button class="tab-btn" data-tab="search">Search</button>
+                        <button class="tab-btn" data-tab="sandbox">Sandbox</button>
+                    </div>
+
+                    <div class="config-panels">
+                        <!-- LLM配置面板 -->
+                        <div class="config-panel active" id="llmPanel">
+                            <div class="form-section">
+                                <h3>LLM Configuration</h3>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="llmModel">Model</label>
+                                        <select id="llmModel" class="form-control">
+                                            <option value="">Select Model</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="llmProvider">Provider</label>
+                                        <select id="llmProvider" class="form-control">
+                                            <option value="openai">OpenAI</option>
+                                            <option value="anthropic">Anthropic</option>
+                                            <option value="google">Google</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="llmBaseUrl">Base URL</label>
+                                    <input type="url" id="llmBaseUrl" class="form-control"
+                                        placeholder="https://api.openai.com/v1">
+                                </div>
+                                <div class="form-group">
+                                    <label for="llmApiKey">API Key</label>
+                                    <div class="input-with-toggle">
+                                        <input type="password" id="llmApiKey" class="form-control"
+                                            placeholder="Enter your API key">
+                                        <button type="button" class="toggle-password" id="toggleApiKey">
+                                            <i class="icon-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="llmMaxTokens">Max Tokens</label>
+                                        <input type="number" id="llmMaxTokens" class="form-control" min="100"
+                                            max="32000" value="4096">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="llmTemperature">Temperature</label>
+                                        <input type="number" id="llmTemperature" class="form-control" min="0" max="2"
+                                            step="0.1" value="0.7">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 其他配置面板... -->
+                        <div class="config-panel" id="browserPanel">
+                            <div class="form-section">
+                                <h3>Browser Configuration</h3>
+                                <div class="form-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="browserHeadless">
+                                        <span class="checkmark"></span>
+                                        Headless Mode
+                                    </label>
+                                    <small class="help-text">Run browser without GUI for better performance</small>
+                                </div>
+                                <div class="form-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="browserDisableSecurity">
+                                        <span class="checkmark"></span>
+                                        Disable Security Features
+                                    </label>
+                                    <small class="help-text">Disable CORS and other security features</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="config-panel" id="searchPanel">
+                            <div class="form-section">
+                                <h3>Search Configuration</h3>
+                                <div class="form-group">
+                                    <label for="searchEngine">Primary Search Engine</label>
+                                    <select id="searchEngine" class="form-control">
+                                        <option value="Google">Google</option>
+                                        <option value="DuckDuckGo">DuckDuckGo</option>
+                                        <option value="Bing">Bing</option>
+                                        <option value="Baidu">Baidu</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="config-panel" id="sandboxPanel">
+                            <div class="form-section">
+                                <h3>Sandbox Configuration</h3>
+                                <div class="form-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="sandboxEnabled">
+                                        <span class="checkmark"></span>
+                                        Enable Sandbox
+                                    </label>
+                                    <small class="help-text">Use Docker sandbox for secure code execution</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 关于视图 -->
+            <div class="view about-view" id="aboutView">
+                <div class="about-content">
+                    <div class="about-header">
+                        <img src="/static/assets/logo.svg" alt="OpenManus" class="about-logo">
+                        <h1>OpenManus</h1>
+                        <p class="version">Version 1.0.0</p>
+                    </div>
+
+                    <div class="about-description">
+                        <h2>About OpenManus</h2>
+                        <p>OpenManus is a powerful AI agent platform that provides a web-based interface for interacting
+                            with large language models and managing various tasks including data analysis, code
+                            generation, and file processing.</p>
+
+                        <h3>Features</h3>
+                        <ul>
+                            <li>Real-time chat interface with AI agents</li>
+                            <li>File upload and workspace management</li>
+                            <li>Configurable LLM integration</li>
+                            <li>WebSocket-based real-time communication</li>
+                            <li>Modern responsive web interface</li>
+                        </ul>
+
+                        <h3>Technology Stack</h3>
+                        <ul>
+                            <li>Backend: FastAPI + Python</li>
+                            <li>Frontend: HTML5 + CSS3 + Vanilla JavaScript</li>
+                            <li>Communication: WebSocket + REST API</li>
+                            <li>AI Integration: OpenAI, Anthropic, Google APIs</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 通知系统 -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- 模态对话框 -->
+    <div class="modal hidden" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle"></h3>
+                <button class="modal-close" id="modalClose">
+                    <i class="icon-close"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer" id="modalFooter"></div>
+        </div>
+    </div>
+
+    <!-- JavaScript模块 -->
+    <script src="/static/js/utils.js"></script>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/websocket.js"></script>
+    <script src="/static/js/chat.js"></script>
+    <script src="/static/js/workspace.js"></script>
+    <script src="/static/js/config.js"></script>
+    <script src="/static/js/flow-agent-selector.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+
+</html>

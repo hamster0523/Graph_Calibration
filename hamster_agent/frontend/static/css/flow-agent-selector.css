@@ -1,0 +1,431 @@
+/* Flow Agent Selector Styles */
+
+/* Status indicator */
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #6c757d;
+}
+
+.status-indicator.configured .status-dot {
+    background: #28a745;
+}
+
+.status-indicator.error .status-dot {
+    background: #dc3545;
+}
+
+/* Styled select */
+.styled-select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background: white;
+    font-size: 0.875rem;
+}
+
+/* Description text */
+.description {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+    font-style: italic;
+}
+
+/* Hint text */
+.hint {
+    font-size: 0.75rem;
+    color: #6c757d;
+    font-weight: normal;
+}
+
+/* Parameters Section */
+.config-section {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.section-label {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.section-label .icon {
+    margin-right: 0.5rem;
+}
+
+/* Parameter Groups */
+.parameter-group {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+}
+
+.parameter-label {
+    display: block;
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.parameter-label.required::after {
+    content: " *";
+    color: #dc3545;
+}
+
+.parameter-item {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+}
+
+.parameter-description {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+    font-style: italic;
+}
+
+.parameter-input-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.parameter-input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    width: 100%;
+}
+
+.parameter-input:focus {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.parameter-input.file-input {
+    background-color: #f8f9fa;
+}
+
+/* File Input Container */
+.file-input-container {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    width: 100%;
+}
+
+.file-input-container .parameter-input {
+    flex: 1;
+    min-width: 0;
+    /* 防止溢出 */
+}
+
+.browse-file-btn {
+    padding: 0.5rem 1rem;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background-color 0.15s ease-in-out;
+    white-space: nowrap;
+}
+
+.browse-file-btn:hover {
+    background: #0056b3;
+}
+
+.browse-file-btn:active {
+    background: #004085;
+}
+
+.btn-browse {
+    padding: 0.5rem 1rem;
+    background: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.btn-browse:hover {
+    background: #5a6268;
+}
+
+.parameter-description {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+    font-style: italic;
+}
+
+/* Log Entry Types */
+.log-entry.log-success {
+    color: #28a745;
+}
+
+.log-entry.log-error {
+    color: #dc3545;
+}
+
+.log-entry.log-info {
+    color: #17a2b8;
+}
+
+.log-time {
+    color: #6c757d;
+    font-size: 0.8rem;
+}
+
+/* Status Updates */
+.status-indicator .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.status-indicator[data-status="not-configured"] .status-dot {
+    background-color: #6c757d;
+}
+
+.status-indicator[data-status="configured"] .status-dot {
+    background-color: #28a745;
+}
+
+.status-indicator[data-status="error"] .status-dot {
+    background-color: #dc3545;
+}
+
+/* Responsive Design for Parameters */
+@media (max-width: 768px) {
+    .parameter-input-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .file-input-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    .browse-file-btn {
+        align-self: flex-start;
+        width: auto;
+    }
+
+    .btn-browse {
+        align-self: flex-start;
+        margin-top: 0.5rem;
+    }
+}
+
+/* Multi-Agent Selection Styles */
+.agents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.agent-option {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s ease-in-out;
+}
+
+.agent-option:hover {
+    border-color: #007bff;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
+}
+
+/* Agent选择标签的整体样式 - 合并优化版本 */
+.agent-checkbox {
+    display: flex;
+    align-items: flex-start;
+    padding: 1rem;
+    cursor: pointer;
+    margin: 0;
+    width: 100%;
+    position: relative;
+}
+
+/* 完全隐藏原生复选框，避免"两个框"的视觉问题 */
+.agent-checkbox input[type="checkbox"] {
+    display: none !important;
+    /* 彻底隐藏原生HTML复选框，只保留自定义样式 */
+}
+
+/* 自定义复选框样式 - 统一设计 */
+.agent-checkbox .checkmark {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #dee2e6;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 12px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    position: relative;
+    cursor: pointer;
+    background-color: #fff;
+    transition: all 0.3s ease;
+}
+
+/* 复选框悬停效果 */
+.agent-checkbox:hover .checkmark {
+    border-color: #007bff;
+    background-color: #f8fbff;
+}
+
+/* 选中状态的背景 */
+.agent-checkbox input[type="checkbox"]:checked+.checkmark {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+/* 选中状态的勾号 */
+.agent-checkbox input[type="checkbox"]:checked+.checkmark::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 6px;
+    height: 11px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.agent-info {
+    flex: 1;
+}
+
+.agent-name {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+}
+
+.agent-desc {
+    color: #6c757d;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+/* 选中状态时Agent名称的颜色变化 */
+.agent-checkbox input[type="checkbox"]:checked+.checkmark+.agent-info .agent-name {
+    color: #007bff;
+    font-weight: 700;
+}
+
+/* 选中状态时整个Agent选项的样式 */
+.agent-option:has(input:checked) {
+    border-color: #007bff;
+    background-color: #f8fbff;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
+}
+
+/* Recommended Agents Section */
+.recommended-agents {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+}
+
+.recommendation-label {
+    display: block;
+    font-weight: 500;
+    color: #856404;
+    margin-bottom: 0.75rem;
+}
+
+.recommendation-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-small {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    border-radius: 4px;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid #6c757d;
+    color: #6c757d;
+}
+
+.btn-outline:hover {
+    background: #6c757d;
+    color: white;
+}
+
+.hint {
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-weight: normal;
+    font-style: italic;
+}
+
+/* Mobile Responsive for Agent Grid */
+@media (max-width: 768px) {
+    .agents-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .agent-checkbox {
+        padding: 0.75rem;
+    }
+
+    .recommendation-buttons {
+        flex-direction: column;
+    }
+
+    .btn-small {
+        width: 100%;
+        text-align: center;
+    }
+}
