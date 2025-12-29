@@ -3,11 +3,19 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 2,
             "patches": [
                 {
                     "date": 1766656429291,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1766997517509,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -42,9 +42,9 @@\n     - `search.py`: Defines the Web Search Agent.\r\n     - `fetch.py`: Defines the Web Read Agent for fetching page content.\r\n \r\n ### `verl_hamster/`\r\n-This appears to be a version of the **verl** (Volcano Engine Reinforcement Learning) library, which is a flexible and efficient RL training library for LLMs.\r\n+the **verl** (Volcano Engine Reinforcement Learning) library, which is a flexible and efficient RL training library for LLMs.\r\n - **Purpose:** Provides infrastructure for Reinforcement Learning from Human Feedback (RLHF) and other RL algorithms for LLMs.\r\n - **Contents:** Includes dockerfiles, documentation, examples, and the core `verl` package.\r\n \r\n ## Getting Started\r\n"
+                },
+                {
+                    "date": 1766997687173,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -42,11 +42,15 @@\n     - `search.py`: Defines the Web Search Agent.\r\n     - `fetch.py`: Defines the Web Read Agent for fetching page content.\r\n \r\n ### `verl_hamster/`\r\n-the **verl** (Volcano Engine Reinforcement Learning) library, which is a flexible and efficient RL training library for LLMs.\r\n+The **verl** (Volcano Engine Reinforcement Learning) library, which is a flexible and efficient RL training library for LLMs.\r\n - **Purpose:** Provides infrastructure for Reinforcement Learning from Human Feedback (RLHF) and other RL algorithms for LLMs.\r\n - **Contents:** Includes dockerfiles, documentation, examples, and the core `verl` package.\r\n+- **Key Modules:**\r\n+    - **`Hamster_Cpt_Worker/`**: A worker service for graph-based operations. It initializes a `GraphBuilder` with a CPT model and performs inference on factor graphs.\r\n+    - **`Hamster_Generation_Manager/`**: Manages the generation process, integrating LLM generation with factor graph construction and online search. It handles trajectory initialization, prompt extraction, and interaction with VLLM and search APIs.\r\n+    - **`Hamster_Reward_Manager/`**: Computes rewards for generated trajectories using a composite reward function that includes format scores, calibration scores (KL divergence), structure scores (entropy), and step-wise rewards.\r\n \r\n ## Getting Started\r\n \r\n Please refer to the specific `README.md` files within subdirectories (e.g., `verl_hamster/README.md`) for detailed installation and usage instructions for each component.\r\n"
                 }
             ],
             "date": 1766656429291,

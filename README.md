@@ -43,9 +43,13 @@ A standalone server or module dedicated to performing online web searches and in
     - `fetch.py`: Defines the Web Read Agent for fetching page content.
 
 ### `verl_hamster/`
-This appears to be a version of the **verl** (Volcano Engine Reinforcement Learning) library, which is a flexible and efficient RL training library for LLMs.
+The **verl** (Volcano Engine Reinforcement Learning) library, which is a flexible and efficient RL training library for LLMs.
 - **Purpose:** Provides infrastructure for Reinforcement Learning from Human Feedback (RLHF) and other RL algorithms for LLMs.
 - **Contents:** Includes dockerfiles, documentation, examples, and the core `verl` package.
+- **Key Modules:**
+    - **`Hamster_Cpt_Worker/`**: A worker service for graph-based operations. It initializes a `GraphBuilder` with a CPT model and performs inference on factor graphs.
+    - **`Hamster_Generation_Manager/`**: Manages the generation process, integrating LLM generation with factor graph construction and online search. It handles trajectory initialization, prompt extraction, and interaction with VLLM and search APIs.
+    - **`Hamster_Reward_Manager/`**: Computes rewards for generated trajectories using a composite reward function that includes format scores, calibration scores (KL divergence), structure scores (entropy), and step-wise rewards.
 
 ## Getting Started
 
