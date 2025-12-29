@@ -411,9 +411,6 @@ class Hamster_Generation_Manager_Close_Source:
         alpha_A: float = 0.50,
         alpha_S: float = 0.25,
     ):
-        """
-        仅 O_t 注入强证据，A/S 可选弱证据（与你原实现一致的参数语义）。
-        """
         def make_e(s: float) -> np.ndarray:
             s = max(s_min, min(s, 0.999))
             if answer_true_or_false:
